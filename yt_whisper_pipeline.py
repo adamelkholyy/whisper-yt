@@ -16,8 +16,8 @@ URLs:
 """
 
 # configuration settings
-URL = "https://www.youtube.com/watch?v=ac5Jct33oUU"
-EXPERIMENT_TITLE = "beck_cbt_roleplay_2"
+URL = "https://www.youtube.com/watch?v=4WEQtgnBu0I"
+EXPERIMENT_TITLE = "elevator_pitch"
 
 MODEL_TYPE = "openai/whisper-tiny"
 DATASET_DIR = "datasets"
@@ -142,6 +142,8 @@ if __name__ == "__main__":
         3. Uses whisper for english transcription on dataset
         4. Calculates Word Error Rate of whisper transcription against original youtube transcript 
     """
+    print(f"[pipeline] Initialised. Preparing to download youtube data.")
+    if GARBAGE_COLLECTOR == False: print(f"[WARNING] Garbage Collection is turned off. Errors will be caused if data/ and downloads/ are not empty!")
 
     # download and segment youtube audio and transcript
     download_and_segment_yt_data(URL)

@@ -1,44 +1,58 @@
 import os 
 import re
 import subprocess
+import yt_dlp
 
-def download_mp3(url: str, output_dir='downloads', audio_filename='audio.mp3'):
+
+def download_mp3(url: str, output_dir='downloads', audio_filename='audio'):
     os.makedirs(output_dir, exist_ok=True)
     audio_output_path = os.path.join(output_dir, audio_filename)
 
-    audio_command = [
-        'yt-dlp',
-        '-x',  # extract audio only
-        '--audio-format', 'mp3',  
-        '-o', f'{audio_output_path}', 
-        url
-    ]
+    ydl_opts = {
+        'format': 'bestaudio/best',  
+        'outtmpl': audio_output_path,  
+        'postprocessors': [{  # force mp3 filetype
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+        'noplaylist': True,  
+    }
 
-    try:
-        subprocess.run(audio_command, check=True)
-        print(f"[yt_downloader] Audio download complete! MP3 saved at {audio_output_path}")
-    except subprocess.CalledProcessError as e:
-        print(f"[yt_downloader] Error downloading audio: {e}")
-    
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+    print(f"[yt_downloader] Audio download complete! MP3 saved at {audio_output_path}")
+
 
 def download_transcript(url: str, output_dir='downloads', transcript_filename='raw_transcript'):
     os.makedirs(output_dir, exist_ok=True)
     transcript_output_path = os.path.join(output_dir, transcript_filename)
 
-    transcript_command = [
-        'yt-dlp',
-        '--write-sub',  # download manual subtitles (if available)
-        '--sub-format', 'vtt',  
-        '--skip-download',  # skip the video download, only get subtitles
-        '-o', f'{transcript_output_path}',  
-        url
-    ]
+    ydl_opts = {
+        'skip_download': True,
+        'writesubtitles': True,
+        'subtitlesformat': 'vtt',
+        'outtmpl': transcript_output_path,
+        'noplaylist': True,
+    }
+   
+    # attempt to download manual subtitles
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+    
+    # if transcript exists then manual subtitles were downloaded successfully 
+    if os.path.exists(transcript_output_path):
+        print(f"[yt_downloader] Manual subtitles download complete! Transcript saved at {transcript_output_path}.vtt")
 
-    try:
-        subprocess.run(transcript_command, check=True)
-        print(f"[yt_downloader] Transcript download complete! Transcript saved at {transcript_output_path}")
-    except subprocess.CalledProcessError as e:
-        print(f"[yt_downloader] Error downloading transcript: {e}")
+    # otherwise there are no manual subs; download auto-generated subs instead
+    else:
+        print(f"[yt_downloader] Manual subtitles not found, attempting to download auto-generated subtitles")
+        ydl_opts['writesubtitles'] = False
+        ydl_opts['writeautomaticsub'] = True  
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+        print(f"[yt_downloader] Auto-generated subtitles download complete! Transcript saved at {transcript_output_path}.vtt")
+
 
 
 def timestamp_to_milliseconds(timestamp: str):
