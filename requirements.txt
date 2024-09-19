@@ -1,0 +1,8 @@
+evaluate==0.4.1
+openai_whisper==20231117
+pydub==0.25.1
+torch==2.1.1+cu118
+torchaudio==2.1.1+cu118
+tqdm==4.66.1
+transformers==4.35.2
+whisper==1.1.10
