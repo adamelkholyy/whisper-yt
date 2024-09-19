@@ -37,6 +37,18 @@ transcription = transcribe_mp3(model_type="base")
 save_transcript(transcript=transcription)
 ```
 
+Output  
+
+```plaintext
+Hello, my name is Andrea Fitzgera.
+I am studying marketing at the University of Texas at Dallas.
+I am a member of the American Marketing Association and Alpha Cafe SIE, both of which are dedicated to shaping future business leaders.
+I hope to incorporate my business knowledge into consumer trend analysis and strengthening relationships among consumers, as well as other companies.
+I am SAVI, social and principled, and have exquisite interpersonal communication skills.
+I know that I can be an asset in any company and or situation, and I hope that you will consider me for an internship or job opportunity.
+Thank you so much.
+```
+
 ### 2. Evaluating Whisper transcriptions against YouTube subtitles
 You can transcribe and evaluate the WER of a given YouTube video using Whisper by running the yt_whisper_pipeline.py script. The script will download the mp3, 
 split the audio and transcript into segments, generate Whisper's transcript, create a huggingface dataset from the audio and transcript data and finally evaluate the WER against YouTube's subtitles. The following are the core optional arguments.
@@ -52,7 +64,7 @@ DATASET_DIR = "datasets"
 ...
 ```
 Outputs are as follows using whisper-base:
-```bash
+```plaintext
 whisper_transcript.txt:
 It all happened really fast because I'm very
 impatient. Like if I don't have a song
