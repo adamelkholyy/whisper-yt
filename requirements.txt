@@ -6,3 +6,4 @@ torchaudio==2.1.1+cu118
 tqdm==4.66.1
 transformers==4.35.2
 whisper==1.1.10
+yt_dlp==2024.8.6
