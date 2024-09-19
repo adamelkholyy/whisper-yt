@@ -5,26 +5,14 @@
 Framework for using Whisper to transcribe YouTube videos. Includes scripts for evaluating Whisper's transcriptions against YouTube's subtitles, transcribing the audio from a given YouTube URL and creating a HuggingFace dataset (using YouTube's subtitles as 
 the ground truth transcription) from a YouTube URL.
 
-## Prerequisites
+## Prerequisites: ffmpeg
 
-Ensure you have the following installed:
-
-- [ffmpeg](https://www.ffmpeg.org/download.html) (for audio processing)
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp) (for downloading YouTube transcripts)
-
-## Installaing ffmpeg
-
+Ensure you have the [ffmpeg](https://www.ffmpeg.org/download.html) installed for audio processing.
 Installing `ffmpeg` using chocolatey:
     ```bash
     choco install ffmpeg
     ```
 Other options for [ffmpeg installation](https://avpres.net/FFmpeg/install_Windows)
-
-Installing `yt-dlp`:
-    ```bash
-    pip install yt-dlp
-    ```
-Other options for [yt-dlp installation](https://github.com/yt-dlp/yt-dlp/wiki/Installation)
 
 ## Usage
 
@@ -35,6 +23,15 @@ You can transcribe audio files by calling the `transcribe_mp3` function.
 ```python
 from utilities import transcribe_mp3
 
-# Transcribe a local mp3 file using Whisper
-transcript = transcribe_mp3(mp3_path="downloads/audio.mp3", model_type="base")
-print(transcript)
+# video url: 40 second elevator pitch 
+URL = "https://www.youtube.com/watch?v=4WEQtgnBu0I"
+
+# download youtube mp3 from url
+download_mp3(URL)
+
+# transcribe using whisper 
+transcription = transcribe_mp3(model_type="base")
+
+# save transcript to file 
+save_transcript(transcript=transcription)
+```
