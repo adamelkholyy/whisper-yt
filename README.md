@@ -7,13 +7,11 @@ the ground truth transcription) from a YouTube URL.
 
 ## Prerequisites: ffmpeg
 
-Ensure you have the [ffmpeg](https://www.ffmpeg.org/download.html) installed for audio processing.  
+Ensure you have the [ffmpeg](https://www.ffmpeg.org/download.html) installed for audio processing. Using chocolatey:  
 
-Installing `ffmpeg` using chocolatey:
-    ```bash
-    choco install ffmpeg
-    ```  
-    
+```
+choco install ffmpeg
+```   
 Other options for [ffmpeg installation](https://avpres.net/FFmpeg/install_Windows)
 
 ## Usage
