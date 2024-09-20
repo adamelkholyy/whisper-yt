@@ -2,24 +2,26 @@ import shutil
 import os
 import torch
 
-from utilities import split_audio_from_transcript, make_dataset, save_transcript
-from yt_downloader import download_mp3, download_transcript, process_transcript
+from utilities import segment_audio_from_transcript, make_dataset, save_transcript
+from yt_downloader import download_mp3, download_transcript
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
 from evaluate import load
 from datasets import Dataset
 
 """
 URLs:
+Auto-generated captions:
     40 second elevator_pitch: https://www.youtube.com/watch?v=4WEQtgnBu0I
-    40 minute Taylor Swift interview (manually transcribed): https://www.youtube.com/watch?v=m9Nkqm7FFgk
     50 minute Beck Institute CBT roleplay: https://www.youtube.com/watch?v=ac5Jct33oUU
+Manually transcribed captions: 
+    3 minute tutorial video: https://www.youtube.com/watch?v=VatNBZh66Po
 """
 
 # configuration settings
 URL = "https://www.youtube.com/watch?v=4WEQtgnBu0I"
-EXPERIMENT_TITLE = "elevator_pitch"
+EXPERIMENT_TITLE = "test1"
 
-MODEL_TYPE = "openai/whisper-tiny"
+MODEL_TYPE = "openai/whisper-base"
 DATASET_DIR = "datasets"
 
 TRANSCRIPT_FILENAME = EXPERIMENT_TITLE + ".txt"
@@ -32,9 +34,9 @@ SAVE_TRANSCRIBED_DS = False
 Garbage collector should remain on as transcription will break if previous audio remains in 'data/' output_dir!
 Bearing this in mind however it can be turned off in order to inspect audio segmentation.
 """
-GARBAGE_COLLECTOR = True 
+GARBAGE_COLLECTOR = False 
 
-def download_and_segment_yt_data(url: str, audio_dir="downloads", data_dir="data"):
+def preprocess_video(url: str, download_dir="downloads", output_dir="data"):
     """
     Downloads mp3 audio and vtt transcript from youtube URL and splits data into 
     audio segments. Creates a transcriptions.json file containing corresponding 
@@ -49,11 +51,11 @@ def download_and_segment_yt_data(url: str, audio_dir="downloads", data_dir="data
         None
     """
 
-    download_mp3(url, output_dir=audio_dir)
-    download_transcript(url, output_dir=audio_dir)
-    transcript = process_transcript(input_dir=audio_dir)
-    mp3_path = os.path.join(audio_dir, "audio.mp3")
-    split_audio_from_transcript(transcript, mp3_path=mp3_path, output_dir=data_dir)
+    download_mp3(url, download_dir=download_dir)
+    download_transcript(url, download_dir=download_dir, output_dir=output_dir)
+    mp3_path = os.path.join(download_dir, "audio.mp3")
+    transcript_path = os.path.join(output_dir, "transcript.json")
+    segment_audio_from_transcript(transcript_path, mp3_path=mp3_path, output_dir=output_dir)
 
 
 def batch_inference(batch, model, processor, device):
@@ -134,6 +136,9 @@ def filter_empty_references(references, predictions):
     return filtered_references, filtered_predictions
 
 
+def pipeline():
+    return 0
+
 if __name__ == "__main__":
     """
     evaluate_yt_transcription_pipeline.py 
@@ -146,10 +151,10 @@ if __name__ == "__main__":
     if GARBAGE_COLLECTOR == False: print(f"[WARNING] Garbage Collection is turned off. Errors will be caused if data/ and downloads/ are not empty!")
 
     # download and segment youtube audio and transcript
-    download_and_segment_yt_data(URL)
+    preprocess_video(URL)
 
     # save as huggingface dataset
-    ds = make_dataset(input_dir="data")
+    ds = make_dataset(data_dir="data")
     dataset_path = os.path.join(DATASET_DIR, DATASET_NAME)
     ds.save_to_disk(dataset_path=dataset_path)
 

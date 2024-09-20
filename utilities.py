@@ -41,7 +41,7 @@ def save_transcript(transcript=None, ds=None, transcript_filename="transcript.tx
     print(f"[utilities] Transcript successfully written to {transcript_path}")
 
 
-def transcribe_mp3(mp3_path="downloads/audio.mp3", model_type="base"):
+def transcribe_mp3(mp3_path: str, model_type="base"):
     """
     Transcribes a given mp3 file using the specified whisper model.
     Args:
@@ -80,21 +80,21 @@ def convert_audio_for_whisper(batch):
     }
     return batch
 
-def make_dataset(input_dir="data"):
+def make_dataset(data_dir: str):
     """
     Creates a huggingface dataset given an input directory structred as follows:
     data/ 
         audio_1.mp3
         audio_2.mp3 
         ...
-        transcriptions.json
+        transcript.json
     Args:
         input_dir (str, optional): Path of the input directory. Defaults to 'data'
     Returns:
         dataset (Dataset): A huggingface dataset object created from the (audio, text transcription) data in input_dir
     """
     # open transcription data
-    transcript_path = os.path.join(input_dir, "transcriptions.json")
+    transcript_path = os.path.join(data_dir, "transcript.json")
     with open(transcript_path, "r") as f:
         transcription_data = json.load(f)
 
@@ -116,8 +116,8 @@ def make_dataset(input_dir="data"):
     dataset = dataset.map(convert_audio_for_whisper)
     return dataset
 
-
-def split_audio_from_transcript(transcript: list, mp3_path="downloads/audio.mp3", output_dir="data"):
+# CHANGE ARGS DOCS
+def segment_audio_from_transcript(transcript_path: str, mp3_path: str, output_dir="data"):
     """
     Splits audio into segments given an MP3 file and a transcript with start and end timestamps.
     Saves a `transcriptions.json` file with data for each segment in the following format:
@@ -135,34 +135,38 @@ def split_audio_from_transcript(transcript: list, mp3_path="downloads/audio.mp3"
     Returns:
         None
     """
+
+    with open(transcript_path, "r") as file:
+        transcript = json.load(file)
+
     audio = AudioSegment.from_mp3(mp3_path)
     os.makedirs(output_dir, exist_ok=True)
     total_segments = len(transcript)
-    transcript_json = []
 
     # progress bar for audio splitting
-    with tqdm(total=total_segments, desc="Splitting Audio", unit="segment") as pbar:
+    with tqdm(total=total_segments, desc="Segmenting Audio", unit="segment") as pbar:
 
         # iterate through transcript and split at given timestamps
-        for i, (start, end, text) in enumerate(transcript):
+        for i, segment_data in enumerate(transcript):
             segment_filename = f"audio_{i+1}.mp3"
             segment_path = os.path.join(output_dir, segment_filename)
             
             # split and save audio segment
-            segment = audio[start:end]
+            segment = audio[segment_data["start"]:segment_data["end"]]
             segment.export(segment_path, format="mp3")
             
             # append json data
-            transcript_json.append({"audio": segment_filename,"text": text})
+            segment_data["audio"] = segment_filename
 
             # update progress bar
-            pbar.set_postfix_str(f"Text: {text[:75].ljust(75)}")
+            pbar.set_postfix_str(f"Text: {segment_data['text'][:75].ljust(75)}")
             pbar.update(1)  
 
     # write transcriptions.json to file
-    transcript_json_path = os.path.join(output_dir, "transcriptions.json")
-    with open(transcript_json_path, 'w') as json_file:
-        json.dump(transcript_json, json_file, indent=2)
+    with open(transcript_path, 'w') as file:
+        json.dump(transcript, file, indent=2)
 
-    print(f"[audio_splitter] Transcriptions have been successfully written to {transcript_json_path}.")
+    print(f"[audio_splitter] Transcriptions have been successfully written to {transcript_path}")
 
+if __name__ == "__main__":
+    segment_audio_from_transcript()
