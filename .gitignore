@@ -5,6 +5,7 @@ data/
 downloads/
 .vscode/
 datasets/
+transcripts/
 
 *.log
 .DS_Store
