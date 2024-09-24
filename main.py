@@ -17,7 +17,7 @@ Manually transcribed captions:
 
 # configuration settings
 URL = "https://www.youtube.com/watch?v=4WEQtgnBu0I"
-TITLE = "elevator_pitch"
+TITLE = "elevator_test"
 
 MODEL_TYPE = "openai/whisper-base"
 DATASET_DIR = "datasets"
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     """
     yt_whisper_pipeline:
         1. Downloads the audio and transcript from a given youtube video URL
-        2. Splits audio and transcript into segments and saves as a huggingface dataset in DATASET_DIR\DATASET_NAME
+        2. Splits audio and transcript into segments and saves as a huggingface dataset in DATASET_DIR\\DATASET_NAME
         3. Uses whisper for English transcription on dataset
         4. Calculates Word Error Rate of whisper transcription against original youtube transcript 
     """
@@ -48,8 +48,9 @@ if __name__ == "__main__":
     if GARBAGE_COLLECTOR: 
         shutil.rmtree("downloads") 
         shutil.rmtree("data")
+        print(f"[pipeline] Garbage collector: downloads/ and data/ successfully deleted")
     else:
-        print(f"[WARNING] Garbage Collection is turned off. Errors will be caused if data/ and downloads/ are not empty!")
+        print(f"[pipeline] WARNING: Garbage Collection is turned off. Errors will be caused if data/ and downloads/ are not empty!")
 
     # download and segment youtube audio and transcript
     download_and_preprocess_yt(URL)

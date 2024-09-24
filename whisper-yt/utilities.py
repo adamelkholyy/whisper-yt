@@ -10,12 +10,12 @@ from tqdm import tqdm
 
 def save_transcript(transcript=None, ds=None, transcript_filename="transcript.txt", verbose=False):
     """
-    Saves a given transcript (from either string or dataset, not both) to file.
+    Saves a given transcript (from either list or dataset, not both) to file.
     Args:
-        transcript (str, optional): Text transcriptions in string form. Defaults to None
-        ds (Dataset, optional): Huggingface dataset object containing text transcriptions in batch[transcription] key. Defaults to None
-        transcript_filename (str, optional): Output transcript text filename. Defaults to "transcript.txt"
-        verbose (bool, optional): Toggles verbose logging. Defaults to False 
+        transcript (list, optional): transcriptions as a list of dicts in the form {'timestamp': (0, 3000), 'text': 'It is a truth universally acknowledged'}. Defaults to None
+        ds (Dataset, optional): Huggingface dataset object containing text transcriptions in batch['transcription']. Defaults to None
+        transcript_filename (str, optional): transcript text filename. Defaults to "transcript.txt"
+        verbose (bool, optional): toggles verbose logging. Defaults to False 
     Raises:
         TypeError: If neither 'transcript' nor 'ds' is provided.
     Returns:
@@ -29,11 +29,11 @@ def save_transcript(transcript=None, ds=None, transcript_filename="transcript.tx
     transcript_path = os.path.join("transcripts", transcript_filename)
 
     with open(transcript_path, "w") as file:
-        # save transcript string to file
+        # save transcript from list to file
         if transcript:
-            for line in transcript.split("."):
-                file.write(line[1:] + ".\n")
-                if verbose: print(line[1:])
+            for line in transcript:
+                file.write(line["text"][1:] + "\n")
+                if verbose: print(line["text"][1:])
 
         # save transcript from dataset to file
         elif ds: 
@@ -49,9 +49,9 @@ def resample_audio(batch):
     """
     Converts the audio in the given batch to the correct format for Whisper transcription.
     Args:
-        batch (dict): A batch of audio for processing
+        batch (dict): batch of audio for processing
     Returns:
-        batch (dict): Batch of audio resampled to 16khz and flattened to numpy array
+        batch (dict): batch of audio resampled to 16khz and flattened to numpy array
     """
     new_sample_rate = 16000
     audio_file = batch["audio"]
@@ -78,9 +78,9 @@ def make_dataset(data_dir: str):
         ...
         transcript.json
     Args:
-        data_dir (str): Path to the input directory
+        data_dir (str): path to the input directory
     Returns:
-        dataset (Dataset): A huggingface dataset object created from the (audio, text transcription) data in input_dir
+        dataset (Dataset): Huggingface dataset object created from the (audio, text transcription) data in input_dir
     """
     # open transcription data
     transcript_path = os.path.join(data_dir, "transcript.json")
@@ -98,7 +98,7 @@ def make_dataset(data_dir: str):
         dataset_dict["audio"].append(audio_file_path)
         dataset_dict["text"].append(item["text"])
 
-    # make huggingface dataset 
+    # create huggingface dataset 
     dataset = Dataset.from_dict(dataset_dict)
 
     # convert the audio to the correct format for Whisper transcription
@@ -108,12 +108,11 @@ def make_dataset(data_dir: str):
 
 def segment_audio_from_transcript(transcript_path: str, mp3_path: str, output_dir="data"):
     """
-    Splits audio into segments given an MP3 file and a transcript.json file with start and end timestamps.
-    Adds an "audio" key to each entry with the path to the mp3 file. 
+    Splits audio into segments given an MP3 file and a transcript.json file with start and end timestamps. Adds an "audio" key to each entry with the path to the mp3 file. 
     Args:
-        transcript_path (str): Path to transcript.json file
-        mp3_path (str): Path to the MP3 audio file to be split
-        output_dir (str, optional): Directory where the audio segments and transcriptions will be saved. Defaults to 'data'
+        transcript_path (str): path to transcript.json file
+        mp3_path (str): path to the MP3 audio file to be split
+        output_dir (str, optional): directory where the audio segments and transcriptions will be saved. Defaults to 'data'
     Returns:
         None
     """
@@ -153,12 +152,11 @@ def filter_empty_references(references, predictions):
     """
     Filters out empty references (blocks of silence) from transcript.
     Args:
-        references (list): List of references (i.e. ground truth transcriptions)
-        predictions (list): List of Whisper transcriptions
+        references (list): list of references (i.e. ground truth transcriptions)
+        predictions (list): list of Whisper transcriptions
     Returns:
-        filtered_references (list): List of references with empty references removed
-        filtered_predictions (list): List of Whisper transcriptions with corresponding 
-        empty references removed
+        filtered_references (list): list of references with empty references removed
+        filtered_predictions (list): list of Whisper transcriptions with corresponding empty references removed
     """
     filtered_references, filtered_predictions = [], []
     for ref, pred in zip(references, predictions):

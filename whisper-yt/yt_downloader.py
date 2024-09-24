@@ -7,14 +7,15 @@ from utilities import segment_audio_from_transcript
 
 def download_and_preprocess_yt(url: str, download_dir="downloads", output_dir="data"):
     """
-    Pipeline to do the following:
-        1) Download audio mp3 and transcript from a youtube video given its url
+    Pipeline to perform the following:
+        1) Download audio mp3 and subtitles transcript from a youtube video given its url
         2) Process the raw transcript 
         3) Split audio into segments from transcript 
+        4) Create transcript.json containing audio segment and transcript data
     Args:
         url (str): Youtube video URL
-        download_dir (str, optional): Directory to save downloaded audio and transcript. Defaults to 'downloads'
-        output_dir (str, optional: Directory to save segmented audio. Defaults to 'data'
+        download_dir (str, optional): directory to save downloaded audio and transcript. Defaults to 'downloads'
+        output_dir (str, optional: directory to save segmented audio. Defaults to 'data'
     Returns:
         None
     """
@@ -39,8 +40,8 @@ def download_mp3(url: str, download_dir='downloads', audio_filename='audio'):
     Downloads the audio (.mp3) of youtube video given its URL 
     Args:
         url (str): Youtube video url 
-        download_dir (str): Directory for mp3 file download. Defaults to 'downloads'
-        audio_filename (str): Name of the mp3 file. Defaults to 'audio'
+        download_dir (str): directory for mp3 file download. Defaults to 'downloads'
+        audio_filename (str): name of the mp3 file. Defaults to 'audio'
     Returns:
         None
     """
@@ -68,15 +69,15 @@ def download_mp3(url: str, download_dir='downloads', audio_filename='audio'):
 
 def download_transcript(url: str, lang="en", download_dir="downloads"):
     """
-    Downloads the raw subtitle transcript from the given youtube url.
+    Downloads the raw subtitle transcript from the given youtube url
     Args:
         url (str): Youtube video url 
-        lang (str, optional): Desired language for transcript. Defaults to "en"
-        download_dir (str, optional): Output directory for downloaded raw transcript. Defaults to "downloads"
+        lang (str, optional): language for transcript. Defaults to "en"
+        download_dir (str, optional): output directory for downloaded raw transcript. Defaults to "downloads"
     Returns:
-        download_info (dict): Dictionary containing 2 keys
-            - "manual" (bool): Indicates whether transcript is manual or auto-generated
-            - "transcript_filename" (str): The raw transcript filename
+        download_info (dict): dictionary containing 2 keys
+            - "manual" (bool): indicates whether transcript is manual or auto-generated
+            - "transcript_filename" (str): raw transcript filename
     """
     transcript_filename = "raw_transcript"
     transcript_filename_ext = f"{transcript_filename}.{lang}.vtt"
@@ -119,9 +120,9 @@ def timestamp_to_milliseconds(timestamp: str):
     """
     Converts a timestamp string in the form 00:00:00.000 into milliseconds
     Args:
-        timestamp (str): Timestamp in string form 
+        timestamp (str): timestamp in string form 
     Returns:
-        total_milliseconds (int): The timestamp converted into milliseconds
+        total_milliseconds (int): timestamp converted into milliseconds
     """
     # regex to extract digits from timestamp
     pattern = r"(\d{2}):(\d{2}):(\d{2})\.(\d{3})"
@@ -135,9 +136,9 @@ def process_manual_transcript(input_dir="downloads", output_dir="data", transcri
     """
     Processes the raw manual transcript vtt file and extracts timestamped text (in ms) to a file (transcript.json)
     Args:
-        input_dir (str, optional): Path to directory containing raw transcript. Defaults to 'downloads'
-        output_dir (str, optional): Path to directory to output transcript.json. Defaults to 'data'
-        transcript_filename (str, optional): Raw transcript filename. Defaults to raw_transcript.en.vtt
+        input_dir (str, optional): path to directory containing raw transcript. Defaults to 'downloads'
+        output_dir (str, optional): path to directory to output transcript.json. Defaults to 'data'
+        transcript_filename (str, optional): raw transcript filename. Defaults to raw_transcript.en.vtt
     Returns:
         None
     """
@@ -145,7 +146,7 @@ def process_manual_transcript(input_dir="downloads", output_dir="data", transcri
     with open(raw_transcript_path, 'r') as file:
         content = file.read()
 
-    # text processing for manual yt vtt transcripts 
+    # text processing for manual yt .vtt transcripts 
     content = content.replace("\n ", "")
     content = content.split("\n\n")
     extracted_data = [group.split("\n")[:3] for group in content if len(group.split("\n")) > 2][1:]
@@ -170,11 +171,11 @@ def process_manual_transcript(input_dir="downloads", output_dir="data", transcri
    
 def process_autogenerated_transcript(input_dir="downloads", output_dir="data", transcript_filename="raw_transcript.en.vtt"):
     """
-    Processes the raw auto-generated transcript vtt file and extracts timestamped text (in ms) to a file (transcript.json)
+    Processes the raw auto-generated transcript vtt file and extracts timestamped text (in ms) to transcript.json
     Args:
-        input_dir (str, optional): Path to directory containing raw transcript. Defaults to 'downloads'
-        output_dir (str, optional): Path to directory to output transcript.json. Defaults to 'data'
-        transcript_filename (str, optional): Raw transcript filename. Defaults to raw_transcript.en.vtt
+        input_dir (str, optional): path to directory containing raw transcript. Defaults to 'downloads'
+        output_dir (str, optional): path to directory to output transcript.json. Defaults to 'data'
+        transcript_filename (str, optional): raw transcript filename. Defaults to raw_transcript.en.vtt
     Returns:
         None
     """
@@ -182,7 +183,7 @@ def process_autogenerated_transcript(input_dir="downloads", output_dir="data", t
     with open(raw_transcript_path, 'r') as file:
         content = file.read()
 
-    # text processing for auto-generated yt vtt transcripts 
+    # text processing for auto-generated yt .vtt transcripts 
     initial_timestamps = content.split("\n")[4]
     content = content.replace("\n ", "")
     content = content.split("\n\n")
@@ -211,7 +212,7 @@ def process_autogenerated_transcript(input_dir="downloads", output_dir="data", t
 
 
 if __name__ == "__main__":
-    video_url = "https://www.youtube.com/watch?v=VatNBZh66Po"
+    video_url = "https://www.youtube.com/watch?v=ac5Jct33oUU"
     download_mp3(video_url)
     download_transcript(video_url)
     transcript = process_manual_transcript()
