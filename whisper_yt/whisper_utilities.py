@@ -191,9 +191,11 @@ def get_whisper_transcription(ds: Dataset, model_type="openai/whisper-base"):
 
 if __name__=="__main__":
     from yt_downloader import download_mp3
-    url = "https://www.youtube.com/watch?v=JSLhP8i-5U0"
-    token = "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"
-    download_mp3(url)
-    t = transcribe_mp3("downloads/audio.mp3", diarize=True,auth_token=token )   
     from utilities import save_transcript
-    save_transcript(t)
+
+    url = "https://www.youtube.com/watch?v=JSLhP8i-5U0"
+    token = ""
+
+    download_mp3(url)
+    transcript = transcribe_mp3("downloads/audio.mp3", diarize=True,auth_token=token )   
+    save_transcript(transcript)
