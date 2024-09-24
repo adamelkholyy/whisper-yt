@@ -1,9 +1,9 @@
 import shutil
 import os
 
-from utilities import make_dataset, save_transcript, filter_empty_references
-from whisper_utilities import get_whisper_transcription
-from yt_downloader import download_and_preprocess_yt
+from whisper_yt.utilities import make_dataset, save_transcript, filter_empty_references
+from whisper_yt.whisper_utilities import get_whisper_transcription
+from whisper_yt.yt_downloader import download_and_preprocess_yt
 from evaluate import load
 
 """

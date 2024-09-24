@@ -2,7 +2,6 @@ import os
 import json
 import re
 import yt_dlp
-
 from utilities import segment_audio_from_transcript
 
 def download_and_preprocess_yt(url: str, download_dir="downloads", output_dir="data"):
