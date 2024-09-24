@@ -140,7 +140,6 @@ with transcript.json as follows
     "text": "studying marketing at the University of",
     "audio": "audio_2.mp3"
   },
-  ...
 ```
 The HuggingFace dataset is then created from this 'data/' directory, which is in the correct format for Whisper evaluation and fine tuning
 
@@ -152,9 +151,9 @@ We will first quickly make a dataset using a video known to have manual transcri
 from whisper_yt.yt_downloader import download_and_preprocess_yt
 from whisper_yt.utilities import make_dataset
 
-# YouTube video url: 3 minute manually transcribed tutorial video
-URL = "https://www.youtube.com/watch?v=VatNBZh66Po"
-download_and_preprocess_yt(url)
+# YouTube video url: 2 minute two person job interview 
+URL = "https://www.youtube.com/watch?v=naIkpQ_cIt0"
+download_and_preprocess_yt(URL)
 ds = make_dataset(data_dir="data")
 ```
 Now we evaluate the WER of Whisper's transcriptions against the manually transcribed subtitles
@@ -177,13 +176,44 @@ wer_function = load("wer")
 wer_score = 100 * wer_function.compute(references=references, predictions=predictions)
 print(f"Word Error Rate (WER) of Whisper transcriptions against youtube subtitles: {wer_score:.3f}%")
 ```
+Which gives us a WER output as follows: ```Word Error Rate (WER) of Whisper transcriptions against youtube subtitles: 10.219%```. For context the full output of the above example is as follows:
+```
+[youtube] Extracting URL: https://www.youtube.com/watch?v=naIkpQ_cIt0 
+[youtube] naIkpQ_cIt0: Downloading webpage 
+[youtube] naIkpQ_cIt0: Downloading ios player API JSON 
+[youtube] naIkpQ_cIt0: Downloading web creator player API JSON 
+[youtube] naIkpQ_cIt0: Downloading m3u8 information 
+[info] naIkpQ_cIt0: Downloading 1 format(s): 251 
+[download] Destination: downloads\audio 
+[download] 100% of 1.70MiB in 00:00:00 at 9.91MiB/s
+[ExtractAudio] Destination: downloads\audio.mp3 
+[yt_downloader] Audio download complete, MP3 saved at downloads\audio
+[youtube] Extracting URL: https://www.youtube.com/watch?v=naIkpQ_cIt0 
+[youtube] naIkpQ_cIt0: Downloading webpage 
+[youtube] naIkpQ_cIt0: Downloading ios player API JSON 
+[youtube] naIkpQ_cIt0: Downloading web creator player API JSON 
+[youtube] naIkpQ_cIt0: Downloading m3u8 information 
+[info] naIkpQ_cIt0: Downloading subtitles: en 
+[info] naIkpQ_cIt0: Downloading 1 format(s): 616+251 
+[info] Writing video subtitles to: downloads\raw_transcript.en.vtt
+[download] Destination: downloads\raw_transcript.en.vtt 
+[download] 100% of 2.71KiB in 00:00:00 at 63.94KiB/s
+[yt_downloader] Manual subtitles downloaded, raw transcript saved to raw_transcript.en.vtt
+[yt_downloader] Raw manual transcript successfully processed and written to data\transcript.json
+Segmenting Audio: 100%|███████████████████████████████████████████████████████████████████████| 45/45 [00:06<00:00,  6.99segment/s, Text: Thank you                                                                  ]
+[audio_splitter] Transcriptions have been successfully written to data\transcript.json
+Map: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 45/45 [00:00<00:00, 84.76 examples/s]
+[pipeline] Using cuda: NVIDIA GeForce GTX 1650 with Max-Q Design
+Map: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 45/45 [00:13<00:00,  3.30 examples/s]
+Word Error Rate (WER) of Whisper transcriptions against youtube subtitles: 10.219%
+```
 
 ### See Also
 - main.py for more examples
 - [pyannote](https://github.com/pyannote/pyannote-audio)
 - [ffmpeg](https://www.ffmpeg.org/)
 - [Whisper](https://github.com/openai/whisper)
-- YouTube: [40 second elevator pitch](https://www.youtube.com/watch?v=4WEQtgnBu0I)
-- YouTube: [2 minute two person job interview](https://www.youtube.com/watch?v=naIkpQ_cIt0)
-- YouTube: [3 minute manually transcribed tutorial video](https://www.youtube.com/watch?v=VatNBZh66Po)
+- YouTube: (auto-generated subtitles) [40 second elevator pitch](https://www.youtube.com/watch?v=4WEQtgnBu0I)
+- YouTube: (manually transcribed) [2 minute two person job interview](https://www.youtube.com/watch?v=naIkpQ_cIt0)
+- YouTube: (manually transcribed) [3 minute tutorial video](https://www.youtube.com/watch?v=VatNBZh66Po)
 
