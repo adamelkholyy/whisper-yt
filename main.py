@@ -7,12 +7,12 @@ from whisper_yt.yt_downloader import download_and_preprocess_yt
 from evaluate import load
 
 # useful example URLs
-elevator_pitch_url = "https://www.youtube.com/watch?v=4WEQtgnBu0I" # 40 seconds, elevator pitch
-job_interview_url = "https://www.youtube.com/watch?v=naIkpQ_cIt0"  # 2 minutes, two person job interview 
-tutorial_video_url = "https://www.youtube.com/watch?v=VatNBZh66Po" # 3 minutes, manually transcribed subtitles
+elevator_pitch_url = "https://www.youtube.com/watch?v=4WEQtgnBu0I" # 40 seconds, elevator pitch, auto-generated subtitles
+job_interview_url = "https://www.youtube.com/watch?v=naIkpQ_cIt0"  # 2 minutes, two person job interview, manually transcribed
+tutorial_video_url = "https://www.youtube.com/watch?v=VatNBZh66Po" # 3 minutes, tutorial video, manually transcribed
 
 # configuration settings
-URL = job_interview_url
+URL = tutorial_video_url
 TITLE = "job_interview"
 
 MODEL_TYPE = "openai/whisper-base"

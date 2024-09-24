@@ -2,7 +2,7 @@ import os
 import json
 import re
 import yt_dlp
-from utilities import segment_audio_from_transcript
+from whisper_yt.utilities import segment_audio_from_transcript
 
 def download_and_preprocess_yt(url: str, download_dir="downloads", output_dir="data"):
     """
@@ -148,16 +148,19 @@ def process_manual_transcript(input_dir="downloads", output_dir="data", transcri
     # text processing for manual yt .vtt transcripts 
     content = content.replace("\n ", "")
     content = content.split("\n\n")
-    extracted_data = [group.split("\n")[:3] for group in content if len(group.split("\n")) > 2][1:]
+    extracted_data = [group.split("\n")[:3] for group in content if len(group.split("\n")) > 1][1:]
     transcript = []
 
     # regex for timestamps in the form 00:00:00.00
     pattern = r"\d+:\d+:\d*\.\d+"
 
     # extracts timestamps and text and converts to milliseconds for transcript.json
-    for (timestamp_data, line1, line2) in extracted_data: 
-        start_timestamp, end_timestamp = re.findall(pattern, timestamp_data)
-        transcript.append({"start": timestamp_to_milliseconds(start_timestamp),"end": timestamp_to_milliseconds(end_timestamp), "text": line1 + " " + line2})
+    for data in extracted_data: 
+        start_timestamp, end_timestamp = re.findall(pattern, data[0])
+
+        # format subtitle line
+        text = "".join([data[i]+ " " for i in range(1, len(data))])[:-1]
+        transcript.append({"start": timestamp_to_milliseconds(start_timestamp),"end": timestamp_to_milliseconds(end_timestamp), "text":text})
 
     # save as transcript.json 
     os.makedirs(output_dir, exist_ok=True)
@@ -215,6 +218,4 @@ if __name__ == "__main__":
     download_mp3(video_url)
     download_transcript(video_url)
     transcript = process_manual_transcript()
-    for t in transcript: print(f"[yt_downloader] {t}")
-
 
