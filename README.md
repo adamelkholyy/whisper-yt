@@ -151,7 +151,7 @@ We will first quickly make a dataset using a video known to have manual transcri
 from whisper_yt.yt_downloader import download_and_preprocess_yt
 from whisper_yt.utilities import make_dataset
 
-# YouTube video url:  2 minute two person job interview 
+# YouTube video url: 2 minute two person job interview 
 URL = "https://www.youtube.com/watch?v=naIkpQ_cIt0"
 download_and_preprocess_yt(URL)
 ds = make_dataset(data_dir="data")
