@@ -58,7 +58,7 @@ def diarize_transcript(transcription: list, mp3_path: str, device: torch.device,
     diarization_pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token=auth_token)
     diarization_pipeline.to(device)
     diarization = diarization_pipeline(mp3_path)
-
+    
     # flatten contiguous lines from the same speaker into blocks
     speaker_blocks = flatten_speakers(diarization)
 
@@ -189,3 +189,11 @@ def get_whisper_transcription(ds: Dataset, model_type="openai/whisper-base"):
     transcribed_ds = ds.map(lambda batch: batch_inference(batch, model, processor, device))
     return transcribed_ds
 
+if __name__=="__main__":
+    from yt_downloader import download_mp3
+    url = "https://www.youtube.com/watch?v=JSLhP8i-5U0"
+    token = "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"
+    download_mp3(url)
+    t = transcribe_mp3("downloads/audio.mp3", diarize=True,auth_token=token )   
+    from utilities import save_transcript
+    save_transcript(t)
