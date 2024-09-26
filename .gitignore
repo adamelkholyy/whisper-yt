@@ -6,6 +6,7 @@ downloads/
 .vscode/
 datasets/
 transcripts/
+.venv/
 
 *.log
 .DS_Store
