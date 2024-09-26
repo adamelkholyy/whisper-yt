@@ -176,35 +176,8 @@ wer_function = load("wer")
 wer_score = 100 * wer_function.compute(references=references, predictions=predictions)
 print(f"Word Error Rate (WER) of Whisper transcriptions against youtube subtitles: {wer_score:.3f}%")
 ```
-Which gives us a WER output as follows: ```Word Error Rate (WER) of Whisper transcriptions against youtube subtitles: 10.219%```. For context the full output of the above example is as follows:
-```
-[youtube] Extracting URL: https://www.youtube.com/watch?v=naIkpQ_cIt0 
-[youtube] naIkpQ_cIt0: Downloading webpage 
-[youtube] naIkpQ_cIt0: Downloading ios player API JSON 
-[youtube] naIkpQ_cIt0: Downloading web creator player API JSON 
-[youtube] naIkpQ_cIt0: Downloading m3u8 information 
-[info] naIkpQ_cIt0: Downloading 1 format(s): 251 
-[download] Destination: downloads\audio 
-[download] 100% of 1.70MiB in 00:00:00 at 9.91MiB/s
-[ExtractAudio] Destination: downloads\audio.mp3 
-[yt_downloader] Audio download complete, MP3 saved at downloads\audio
-[youtube] Extracting URL: https://www.youtube.com/watch?v=naIkpQ_cIt0 
-[youtube] naIkpQ_cIt0: Downloading webpage 
-[youtube] naIkpQ_cIt0: Downloading ios player API JSON 
-[youtube] naIkpQ_cIt0: Downloading web creator player API JSON 
-[youtube] naIkpQ_cIt0: Downloading m3u8 information 
-[info] naIkpQ_cIt0: Downloading subtitles: en 
-[info] naIkpQ_cIt0: Downloading 1 format(s): 616+251 
-[info] Writing video subtitles to: downloads\raw_transcript.en.vtt
-[download] Destination: downloads\raw_transcript.en.vtt 
-[download] 100% of 2.71KiB in 00:00:00 at 63.94KiB/s
-[yt_downloader] Manual subtitles downloaded, raw transcript saved to raw_transcript.en.vtt
-[yt_downloader] Raw manual transcript successfully processed and written to data\transcript.json
-Segmenting Audio: 100%|███████████████████████████████████████████████████████████████████████| 45/45 [00:06<00:00,  6.99segment/s, Text: Thank you                                                                  ]
-[audio_splitter] Transcriptions have been successfully written to data\transcript.json
-Map: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 45/45 [00:00<00:00, 84.76 examples/s]
-[pipeline] Using cuda: NVIDIA GeForce GTX 1650 with Max-Q Design
-Map: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 45/45 [00:13<00:00,  3.30 examples/s]
+Which gives us a WER output as follows
+```plaintext
 Word Error Rate (WER) of Whisper transcriptions against youtube subtitles: 10.219%
 ```
 
