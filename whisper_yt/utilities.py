@@ -32,7 +32,8 @@ def save_transcript(transcript=None, ds=None, transcript_filename="transcript.tx
         # save transcript from list to file
         if transcript:
             for line in transcript:
-                file.write(line["text"][1:] + "\n")
+                speaker = f'{line["speaker"]}: ' if "speaker" in line else ""
+                file.write(f'{speaker}{line["text"][1:]}\n')
                 if verbose: print(line["text"][1:])
 
         # save transcript from dataset to file
