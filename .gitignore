@@ -1,5 +1,4 @@
 __pycache__/
-
 old/
 data/
 downloads/
@@ -7,7 +6,6 @@ downloads/
 datasets/
 transcripts/
 .venv/
-
 *.log
 .DS_Store
 *.tmp
@@ -15,6 +13,5 @@ transcripts/
 *.bak
 *.git
 .git
-
 tempCodeRunnerFile.py
 TODO.py

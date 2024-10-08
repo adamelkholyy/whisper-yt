@@ -2,33 +2,10 @@ import shutil
 import os
 
 from whisper_yt.utilities import make_dataset, save_transcript, filter_empty_references
-from whisper_yt.whisper_utilities import get_whisper_transcription
+from whisper_yt.whisper import get_whisper_transcription
 from whisper_yt.yt_downloader import download_and_preprocess_yt
 from evaluate import load
-
-# useful example URLs
-elevator_pitch_url = "https://www.youtube.com/watch?v=4WEQtgnBu0I" # 40 seconds, elevator pitch, auto-generated subtitles
-job_interview_url = "https://www.youtube.com/watch?v=naIkpQ_cIt0"  # 2 minutes, two person job interview, manually transcribed
-tutorial_video_url = "https://www.youtube.com/watch?v=VatNBZh66Po" # 3 minutes, tutorial video, manually transcribed
-
-# configuration settings
-URL = tutorial_video_url
-TITLE = "job_interview"
-
-MODEL_TYPE = "openai/whisper-base"
-DATASET_DIR = "datasets"
-REMOVE_EMPTY_REFERENCES = True
-SAVE_TRANSCRIBED_DS = False
-
-"""
-Garbage collector should remain on as transcription will break if previous audio remains in 'data/' output_dir!
-Bearing this in mind however it can be turned off in order to inspect audio segmentation.
-"""
-GARBAGE_COLLECTOR = True 
-
-# create filenames
-TRANSCRIPT_FILENAME = TITLE + ".txt"
-DATASET_NAME = TITLE + "_"+ MODEL_TYPE.replace("/", "-") + "_ds"
+from settings import *
 
 if __name__ == "__main__":
     """
@@ -53,12 +30,12 @@ if __name__ == "__main__":
 
     # save as huggingface dataset
     ds = make_dataset(data_dir="data")
-    dataset_path = os.path.join(DATASET_DIR, DATASET_NAME)
+    dataset_path = os.path.join(DATASET_DIR, TITLE+"_ds")
     ds.save_to_disk(dataset_path=dataset_path)
 
     # generate whisper transcript and save to to file
     transcribed_ds = get_whisper_transcription(ds)
-    save_transcript(ds=transcribed_ds, transcript_filename=TRANSCRIPT_FILENAME)
+    save_transcript(ds=transcribed_ds, transcript_filename=TITLE+".txt")
 
     # save whisper transcriptions to separate dataset
     if SAVE_TRANSCRIBED_DS:
